@@ -1,12 +1,9 @@
 ---
-import AndroidLogo from '@phosphor-icons/core/assets/fill/android-logo-fill.svg';
 import { site } from '../data/site';
 ---
 
 <header class="mx-auto w-full max-w-prose px-4">
-  <span class="relative -mt-10 grid size-20 place-items-center rounded-pin bg-paper text-accent shadow-[0_2px_12px_rgb(0_0_0/0.08)] md:-mt-12 md:size-24" aria-hidden="true">
-    <AndroidLogo class="size-12 md:size-14" />
-  </span>
+  <img src={`${site.avatar}?size=192`} alt="" width="96" height="96" loading="eager" class="relative -mt-10 block size-20 rounded-pin bg-hover shadow-[0_2px_12px_rgb(0_0_0/0.08)] ring-4 ring-paper md:-mt-12 md:size-24" />
   <h1 class="mt-6 text-step-3 leading-tight font-bold">{site.name}</h1>
 
   <dl class="mt-6 grid grid-cols-[7rem_1fr] gap-y-1 text-step--1">

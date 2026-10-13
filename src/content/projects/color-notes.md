@@ -3,7 +3,6 @@ title: Color Notes
 summary: Notes and to-dos with planner backgrounds, stickers, drawing tools and a calendar view.
 tech: [Kotlin, Jetpack Compose, Hilt, Room, WorkManager]
 year: 2026
-icon: ../../assets/icons/color-notes.webp
 video: /videos/color-notes.mp4
 images:
   - ../../assets/projects/color-notes/1.webp

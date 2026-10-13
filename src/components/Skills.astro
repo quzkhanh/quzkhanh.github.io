@@ -1,0 +1,42 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import { site } from '../data/site';
+
+interface Props {
+  apps: { id: string; title: string; icon?: ImageMetadata; color: string; hasVideo: boolean }[];
+}
+
+const { apps } = Astro.props;
+const [featured, ...rest] = site.skills;
+---
+
+<section aria-labelledby="skills-title" class="page mt-16">
+  <h2 id="skills-title" class="mb-6 text-step-2 font-bold">What I do</h2>
+  <ul class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+    <li class="flex flex-col gap-3 rounded-pin bg-ink p-6 text-paper sm:col-span-2 md:col-span-1 md:row-span-2">
+      <featured.icon class="size-8 text-accent" aria-hidden="true" />
+      <h3 class="text-step-1 font-bold">{featured.title}</h3>
+      <p class="text-paper/75">{featured.text}</p>
+      {/* Each icon opens that app's closeup sheet, so the skill links straight to proof. */}
+      <div class="mt-auto flex flex-wrap gap-3 pt-4">
+        {apps.map(({ id, title, icon, color, hasVideo }) => (
+          <button type="button" data-open={id} data-screen={hasVideo ? -1 : 0} aria-haspopup="dialog" aria-label={`Open ${title}`} title={title} class="size-12 overflow-hidden rounded-[28%] transition-transform duration-200 hover:-translate-y-1 motion-reduce:transition-none">
+            {icon ? (
+              <Image src={icon} alt="" width={96} class="size-full" />
+            ) : (
+              <span class="grid size-full place-items-center text-step-1 font-bold text-ink" style={`background: ${color}`}>{title[0]}</span>
+            )}
+          </button>
+        ))}
+      </div>
+    </li>
+    {rest.map(({ icon: Icon, title, text }, index) => (
+      <li class:list={['flex flex-col gap-3 rounded-pin bg-hover p-6', index === rest.length - 1 && 'sm:col-span-2']}>
+        <Icon class="size-8 text-accent" aria-hidden="true" />
+        <h3 class="text-step-1 font-bold">{title}</h3>
+        <p class="text-muted">{text}</p>
+      </li>
+    ))}
+  </ul>
+</section>

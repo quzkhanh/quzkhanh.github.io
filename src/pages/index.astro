@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import Cover from '../components/Cover.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PinGrid from '../components/PinGrid.astro';
+import Skills from '../components/Skills.astro';
 import { site } from '../data/site';
 
 const COVER_SHOTS = 9;
@@ -12,12 +13,14 @@ const coverShots = projects
   .flatMap(({ data }) => data.images.map((image) => ({ image, color: data.color })))
   .filter((_, index, all) => index % Math.max(1, Math.floor(all.length / COVER_SHOTS)) === 0)
   .slice(0, COVER_SHOTS);
+const apps = projects.map(({ id, data }) => ({ id, title: data.title, icon: data.icon, color: data.color, hasVideo: Boolean(data.video) }));
 ---
 
 <Base>
   <Cover shots={coverShots} />
   <main>
     <PageHeader />
+    <Skills apps={apps} />
     <PinGrid projects={projects} />
   </main>
   <footer class="page border-t border-line py-6 text-step--1 text-muted">

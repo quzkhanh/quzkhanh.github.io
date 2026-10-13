@@ -14,7 +14,7 @@ const ogImage = new URL('/og.png', Astro.site);
     <title>{site.title}</title>
     <meta name="description" content={site.description} />
     <link rel="canonical" href={Astro.site} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={`${site.avatar}?size=64`} type="image/png" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={site.title} />
     <meta property="og:description" content={site.description} />

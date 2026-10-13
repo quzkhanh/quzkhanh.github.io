@@ -4,7 +4,7 @@ Ngày: 2026-10-12, cập nhật 2026-10-13. Bản chốt: trang kiểu Notion, p
 
 ## 1. Mục tiêu
 
-Portfolio một trang cho **quzkhanh**, Android developer làm solo từ màn đầu tới release, build được cả web và automation.
+Portfolio một trang cho **quzkhanh**, mobile & web developer làm solo từ màn đầu tới release (native hoặc cross-platform), build được cả web và automation. Không nhấn mạnh riêng Kotlin hay native.
 
 - Người xem chính: **khách freelance**. Nội dung tiếng Anh, ít chữ, ảnh và video thật là chính.
 - Cảm giác: tối giản như Notion, có phong cách như Pinterest. **Nhẹ, nhanh, mượt.**
@@ -33,7 +33,8 @@ Quy tắc bo góc: control kiểu Notion `0.375rem`, pin `1rem`, sheet `2rem`, n
 ### 3.1 Bố cục
 
 1. **Cover**: dải ảnh màn hình thật của các app (thay ảnh bìa Notion).
-2. **Page header** (cột hẹp như trang Notion): page icon, tên `quzkhanh`, các dòng property (Role, Builds, Works, Stack, Contact), callout "Have an app in mind?" với nút `Get in touch` (mailto).
+2. **Page header** (cột hẹp như trang Notion): page icon là avatar GitHub (`github.com/quzkhanh.png`, lấy trực tiếp nên tự đổi theo GitHub, cũng là favicon), tên `quzkhanh`, các dòng property (Role, Works, Contact), callout "Have an app in mind?" với nút `Get in touch` (mailto).
+2b. **What I do**: bento 4 thẻ, mỗi thẻ một mảng chung chung (Mobile apps, UI from design, Websites, Automation), không liệt kê thư viện. Thẻ Mobile apps nền tối, chứa icon 9 app; bấm icon mở sheet của app đó. App chưa có icon thật hiện chữ cái đầu trên màu app.
 3. **Apps I built**: tường masonry 2/3/4/5 cột. Mỗi pin là một màn hình hoặc video quay màn hình của một app, cắt theo vài tỉ lệ luân phiên cho cao thấp so le. Pin video đứng đầu tường.
 4. Footer: `© năm quzkhanh`.
 
@@ -68,7 +69,8 @@ src/
   layouts/Base.astro         # <head>, SEO/OG
   components/
     Cover.astro              # dải ảnh bìa
-    PageHeader.astro         # icon, tên, properties, callout
+    PageHeader.astro         # avatar, tên, properties, callout
+    Skills.astro             # What I do bento
     PinGrid.astro            # masonry + script (packing, video, sheet)
     Pin.astro                # một pin ảnh hoặc video
     PinSheet.astro           # closeup sheet
@@ -76,9 +78,9 @@ src/
   content.config.ts          # schema
   data/site.ts               # thông tin cá nhân
   assets/projects/<slug>/    # ảnh màn hình webp
-  assets/icons/<slug>.webp   # icon launcher
+  assets/icons/<slug>.webp   # icon launcher thật (không dùng icon template)
   styles/global.css          # token + class dùng chung
-public/                      # favicon.svg, og.png, videos/<slug>.mp4
+public/                      # og.png, videos/<slug>.mp4
 .github/workflows/deploy.yml
 ```
 
