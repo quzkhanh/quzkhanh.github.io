@@ -1,0 +1,98 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Pin from './Pin.astro';
+import PinSheet from './PinSheet.astro';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { projects } = Astro.props;
+const rounds = Math.max(...projects.map(({ data }) => data.images.length));
+// Round-robin across apps so neighbouring pins come from different apps and colors mix.
+const videoPins = projects
+  .filter(({ data }) => data.video)
+  .map(({ id, data }) => ({ appId: id, title: data.title, color: data.color, image: data.images[0], screen: -1, video: data.video }));
+const screenPins = Array.from({ length: rounds }, (_, screen) =>
+  projects.filter(({ data }) => data.images[screen]).map(({ id, data }) => ({ appId: id, title: data.title, color: data.color, image: data.images[screen], screen })),
+).flat();
+// Videos open the wall so it feels alive on first load; screen pins follow.
+const pins = [...videoPins.slice(0, 5), ...screenPins.slice(0, 5), ...videoPins.slice(5), ...screenPins.slice(5)];
+---
+
+<section aria-labelledby="work-title" class="page mt-16 pb-24">
+  <h2 id="work-title" class="mb-6 text-step-2 font-bold">Apps I built</h2>
+  <ul data-masonry class="masonry grid grid-cols-2 gap-x-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    {pins.map((pin, index) => <Pin {...pin} index={index} />)}
+  </ul>
+  {projects.map((project) => <PinSheet project={project} />)}
+</section>
+
+<script>
+  // Pinterest packing: each pin spans as many thin grid rows as its own height needs.
+  const grid = document.querySelector<HTMLElement>('[data-masonry]')!;
+  const rowHeight = parseFloat(getComputedStyle(grid).gridAutoRows);
+  const pack = new ResizeObserver((entries) =>
+    entries.forEach(({ target }) => {
+      (target as HTMLElement).style.gridRowEnd = `span ${Math.ceil(target.getBoundingClientRect().height / rowHeight)}`;
+    }),
+  );
+  grid.querySelectorAll(':scope > li').forEach((pin) => pack.observe(pin));
+
+  // Browsers fetch every poster up front, so posters are attached only when a video nears the viewport.
+  const posters = new IntersectionObserver(
+    (entries) =>
+      entries.forEach(({ target, isIntersecting }) => {
+        if (!isIntersecting) return;
+        const video = target as HTMLVideoElement;
+        video.poster = video.dataset.poster!;
+        posters.unobserve(video);
+      }),
+    { rootMargin: '600px 0px' },
+  );
+  document.querySelectorAll('[data-poster]').forEach((video) => posters.observe(video));
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion) {
+    const autoplay = new IntersectionObserver(
+      (entries) =>
+        entries.forEach(({ target, isIntersecting }) => {
+          const video = target as HTMLVideoElement;
+          if (isIntersecting) void video.play().catch(() => {});
+          else video.pause();
+        }),
+      { threshold: 0.5 },
+    );
+    document.querySelectorAll('[data-autoplay]').forEach((video) => autoplay.observe(video));
+  }
+  document.querySelectorAll<HTMLButtonElement>('[data-open]').forEach((button) =>
+    button.addEventListener('click', () => {
+      const sheet = document.querySelector<HTMLDialogElement>(`#sheet-${button.dataset.open}`)!;
+      sheet.showModal();
+      const track = sheet.querySelector<HTMLElement>('[data-track]')!;
+      const offset = sheet.querySelector('video') ? 1 : 0;
+      track.scrollTo({ left: track.clientWidth * (Number(button.dataset.screen) + offset), behavior: 'instant' });
+      if (!reduceMotion) void sheet.querySelector('video')?.play().catch(() => {});
+    }),
+  );
+
+  document.querySelectorAll<HTMLDialogElement>('.sheet').forEach((sheet) => {
+    sheet.addEventListener('click', (event) => {
+      const target = event.target as Element;
+      if (target === sheet || target.closest('[data-close]')) sheet.close();
+    });
+    sheet.addEventListener('close', () => sheet.querySelector('video')?.pause());
+
+    const track = sheet.querySelector<HTMLElement>('[data-track]')!;
+    const prev = sheet.querySelector<HTMLButtonElement>('[data-prev]')!;
+    const next = sheet.querySelector<HTMLButtonElement>('[data-next]')!;
+    const update = () => {
+      prev.disabled = track.scrollLeft <= 1;
+      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+    };
+    prev.addEventListener('click', () => track.scrollBy({ left: -track.clientWidth }));
+    next.addEventListener('click', () => track.scrollBy({ left: track.clientWidth }));
+    track.addEventListener('scroll', update, { passive: true });
+    new ResizeObserver(update).observe(track);
+  });
+</script>

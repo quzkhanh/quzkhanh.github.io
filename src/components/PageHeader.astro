@@ -1,0 +1,30 @@
+---
+import AndroidLogo from '@phosphor-icons/core/assets/fill/android-logo-fill.svg';
+import { site } from '../data/site';
+---
+
+<header class="mx-auto w-full max-w-prose px-4">
+  <span class="relative -mt-10 grid size-20 place-items-center rounded-pin bg-paper text-accent shadow-[0_2px_12px_rgb(0_0_0/0.08)] md:-mt-12 md:size-24" aria-hidden="true">
+    <AndroidLogo class="size-12 md:size-14" />
+  </span>
+  <h1 class="mt-6 text-step-3 leading-tight font-bold">{site.name}</h1>
+
+  <dl class="mt-6 grid grid-cols-[7rem_1fr] gap-y-1 text-step--1">
+    {site.properties.map(({ label, value }) => (
+      <>
+        <dt class="py-1.5 text-muted">{label}</dt>
+        <dd class="py-1.5">{value}</dd>
+      </>
+    ))}
+    <dt class="py-1.5 text-muted">Contact</dt>
+    <dd class="flex flex-wrap gap-x-4 py-1.5">
+      <a href={`mailto:${site.email}`} class="link">{site.email}</a>
+      <a href={site.github} target="_blank" rel="noopener" class="link">GitHub</a>
+    </dd>
+  </dl>
+
+  <div class="mt-8 flex flex-col items-start gap-4 rounded-control bg-hover p-4 sm:flex-row sm:items-center sm:justify-between">
+    <p>{site.callout}</p>
+    <a href={`mailto:${site.email}`} class="btn btn-primary">Get in touch</a>
+  </div>
+</header>
