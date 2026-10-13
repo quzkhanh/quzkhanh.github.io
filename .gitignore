@@ -4,3 +4,6 @@ dist/
 .env
 .env.*
 .DS_Store
+
+# Global git ignore excludes *.mp4; the site ships its screen recordings.
+!public/videos/*.mp4
