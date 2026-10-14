@@ -12,7 +12,7 @@ interface Props {
 const { id, data } = Astro.props.project;
 const links = [
   { href: data.store, label: 'Google Play' },
-  { href: data.demo, label: 'Live demo' },
+  { href: data.demo, label: data.kind === 'game' ? 'Play in browser' : 'Live demo' },
   { href: data.repo, label: 'GitHub' },
 ].filter((link) => link.href);
 ---

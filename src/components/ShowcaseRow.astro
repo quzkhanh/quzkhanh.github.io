@@ -1,0 +1,65 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import ArrowUpRight from '@phosphor-icons/core/assets/bold/arrow-up-right-bold.svg';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  flip: boolean;
+}
+
+const KIND_LABEL = { app: 'Mobile app', web: 'Web app', game: 'Browser game' };
+const QUALITY = 70;
+
+const { project, flip } = Astro.props;
+const { id, data } = project;
+const cover = data.images[0];
+const poster = data.video && (await getImage({ src: cover, width: 960, quality: QUALITY })).src;
+const links = [
+  { href: data.demo, label: data.kind === 'game' ? 'Play' : 'Open live' },
+  { href: data.repo, label: 'Code' },
+].filter((link) => link.href);
+---
+
+<article id={id} class="grid scroll-mt-8 items-center gap-6 border-t border-line py-10 md:grid-cols-[3fr_2fr] md:gap-12">
+  <button type="button" data-open={id} data-screen={data.video ? -1 : 0} aria-haspopup="dialog" aria-label={`Open ${data.title} screens`} class:list={['group relative block aspect-video w-full cursor-zoom-in overflow-hidden rounded-pin ring-1 ring-black/5', flip && 'md:order-2']} style={`background: ${data.color}`}>
+    {data.video ? (
+      <video src={data.video} data-poster={poster} data-autoplay muted loop playsinline preload="none" class="size-full object-cover" aria-hidden="true"></video>
+    ) : (
+      <Image src={cover} alt="" widths={[640, 960]} sizes="(min-width: 768px) 36rem, 100vw" quality={QUALITY} loading="lazy" class="size-full object-cover" />
+    )}
+    <span class="absolute inset-0 flex items-start justify-end bg-black/0 p-3 transition-colors duration-200 group-hover:bg-black/25">
+      <span class="btn btn-primary min-h-10 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">Open</span>
+    </span>
+  </button>
+
+  <div class="flex flex-col gap-4">
+    <div>
+      <h3 class="text-step-2 leading-tight font-bold">{data.title}</h3>
+      <p class="mt-1 text-step--1 text-muted">{KIND_LABEL[data.kind]} · Solo, {data.year}</p>
+    </div>
+    <p>{data.summary}</p>
+    {data.stats.length > 0 && (
+      <dl class="flex flex-wrap gap-x-8 gap-y-3">
+        {data.stats.map(({ value, label }) => (
+          <div class="flex flex-col-reverse">
+            <dt class="text-step--1 text-muted">{label}</dt>
+            <dd class="text-step-2 leading-tight font-bold">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    )}
+    <div class="flex flex-wrap gap-1.5">{data.tech.map((item) => <span class="tag">{item}</span>)}</div>
+    {links.length > 0 && (
+      <div class="flex flex-wrap gap-2 pt-2">
+        {links.map(({ href, label }, index) => (
+          <a href={href} target="_blank" rel="noopener" class:list={['btn gap-1.5', index === 0 ? 'btn-primary' : 'btn-soft']}>
+            {label}
+            <ArrowUpRight class="size-4" aria-hidden="true" />
+            <span class="sr-only">(opens in a new tab)</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</article>

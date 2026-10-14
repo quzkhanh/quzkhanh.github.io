@@ -13,6 +13,8 @@ const projects = defineCollection({
       images: z.array(image()).min(1),
       icon: image().optional(),
       video: z.string().optional(),
+      kind: z.enum(['app', 'web', 'game']).default('app'),
+      stats: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
       color: z.string().regex(/^#[0-9a-f]{6}$/i).default('#d9d9d6'),
       store: z.url().optional(),
       repo: z.url().optional(),

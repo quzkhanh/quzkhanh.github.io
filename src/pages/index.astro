@@ -4,24 +4,28 @@ import Base from '../layouts/Base.astro';
 import Cover from '../components/Cover.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PinGrid from '../components/PinGrid.astro';
+import Showcase from '../components/Showcase.astro';
 import Skills from '../components/Skills.astro';
 import { site } from '../data/site';
 
 const COVER_SHOTS = 9;
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const coverShots = projects
+const apps = projects.filter(({ data }) => data.kind === 'app');
+const work = projects.filter(({ data }) => data.kind !== 'app');
+const coverShots = apps
   .flatMap(({ data }) => data.images.map((image) => ({ image, color: data.color })))
   .filter((_, index, all) => index % Math.max(1, Math.floor(all.length / COVER_SHOTS)) === 0)
   .slice(0, COVER_SHOTS);
-const apps = projects.map(({ id, data }) => ({ id, title: data.title, icon: data.icon, color: data.color, hasVideo: Boolean(data.video) }));
+const appIcons = apps.map(({ id, data }) => ({ id, title: data.title, icon: data.icon, color: data.color, hasVideo: Boolean(data.video) }));
 ---
 
 <Base>
   <Cover shots={coverShots} />
   <main>
     <PageHeader />
-    <Skills apps={apps} />
-    <PinGrid projects={projects} />
+    <Skills apps={appIcons} />
+    <Showcase projects={work} />
+    <PinGrid projects={apps} />
   </main>
   <footer class="page border-t border-line py-6 text-step--1 text-muted">
     © {new Date().getFullYear()} {site.name}

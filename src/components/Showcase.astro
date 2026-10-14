@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PinSheet from './PinSheet.astro';
+import ShowcaseRow from './ShowcaseRow.astro';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { projects } = Astro.props;
+---
+
+<section aria-labelledby="showcase-title" class="page mt-16">
+  <h2 id="showcase-title" class="mb-6 text-step-2 font-bold">Web &amp; games</h2>
+  {projects.map((project, index) => <ShowcaseRow project={project} flip={index % 2 === 1} />)}
+  {projects.map((project) => <PinSheet project={project} />)}
+</section>
